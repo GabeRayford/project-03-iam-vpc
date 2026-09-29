@@ -1,0 +1,79 @@
+Your Cloud Platform project in this session is set to project-c1a05de0-ba4b-4764-93a.
+Use `gcloud config set project [PROJECT_ID]` to change to a different project.
+g_rayford2121@cloudshell:~ (project-c1a05de0-ba4b-4764-93a)$ gcloud config set project ace-practice-zone
+WARNING: [g.rayford2121@gmail.com] does not have permission to access projects instance [ace-practice-zone] (or it may not exist): The caller does not have permission. This command is authenticated as g.rayford2121@gmail.com which is the active account specified by the [core/account] property
+Are you sure you wish to set property [core/project] to ace-practice-zone?
+
+Do you want to continue (Y/n)?  Y
+
+Updated property [core/project].
+g_rayford2121@cloudshell:~ (ace-practice-zone)$ gcloud iam service-accounts create deployment-executor --description="Secure deployment runner for isolated zones" --display-name="Deployment Executor"
+ERROR: (gcloud.iam.service-accounts.create) [g.rayford2121@gmail.com] does not have permission to access projects instance [ace-practice-zone] (or it may not exist): Permission iam.serviceAccounts.create is required to perform this operation on project projects/ace-practice-zone. This command is authenticated as g.rayford2121@gmail.com which is the active account specified by the [core/account] property.
+g_rayford2121@cloudshell:~ (ace-practice-zone)$ gcloud projects list
+PROJECT_ID: project-c1a05de0-ba4b-4764-93a
+NAME: My First Project
+PROJECT_NUMBER: 610972308695
+ENVIRONMENT: 
+g_rayford2121@cloudshell:~ (ace-practice-zone)$ gcloud config set project 610972308695
+[environment: untagged] Read more to tag: g.co/cloud/project-env-tag.
+Updated property [core/project].
+g_rayford2121@cloudshell:~ (610972308695)$ gcloud compute networks create secure-isolated-vpc --subnet-mode=custom
+ERROR: (gcloud.compute.networks.create) The value of ``core/project'' property is set to project number.To use this command, set ``--project'' flag to PROJECT ID or set ``core/project'' property to PROJECT ID.
+g_rayford2121@cloudshell:~ (610972308695)$ gcloud compute networks create secure-isolated-vpc --subnet-mode=custom
+ERROR: (gcloud.compute.networks.create) The value of ``core/project'' property is set to project number.To use this command, set ``--project'' flag to PROJECT ID or set ``core/project'' property to PROJECT ID.
+g_rayford2121@cloudshell:~ (610972308695)$ gcloud compute networks create secure-isolated-vpc --subnet-mode=custom --project=610972308695
+ERROR: (gcloud.compute.networks.create) The value of ``--project'' flag was set to Project number.To use this command, set it to PROJECT ID instead.
+g_rayford2121@cloudshell:~ (610972308695)$ gcloud compute networks create secure-isolated-vpc --subnet-mode=custom --project=project-c1a05de0-ba4b-4764-93a 
+Created [https://www.googleapis.com/compute/v1/projects/project-c1a05de0-ba4b-4764-93a/global/networks/secure-isolated-vpc].
+NAME: secure-isolated-vpc
+SUBNET_MODE: CUSTOM
+BGP_ROUTING_MODE: REGIONAL
+IPV4_RANGE: 
+GATEWAY_IPV4: 
+INTERNAL_IPV6_RANGE: 
+
+Instances on this network will not be reachable until firewall rules
+are created. As an example, you can allow all internal traffic between
+instances as well as SSH, RDP, and ICMP by running:
+
+$ gcloud compute firewall-rules create <FIREWALL_NAME> --network secure-isolated-vpc --allow tcp,udp,icmp --source-ranges <IP_RANGE>
+$ gcloud compute firewall-rules create <FIREWALL_NAME> --network secure-isolated-vpc --allow tcp:22,tcp:3389,icmp
+
+g_rayford2121@cloudshell:~ (610972308695)$ gcloud compute networks subnets create secure-subnet --network=secure-isolated-vpc --region=us-central1 --range=10.5.0.0/24 --enable-private-ip-google-access --project=project-c1a05de0-ba4b-4764-93a 
+Created [https://www.googleapis.com/compute/v1/projects/project-c1a05de0-ba4b-4764-93a/regions/us-central1/subnetworks/secure-subnet].
+NAME: secure-subnet
+REGION: us-central1
+NETWORK: secure-isolated-vpc
+RANGE: 10.5.0.0/24
+STACK_TYPE: IPV4_ONLY
+IPV6_ACCESS_TYPE: 
+INTERNAL_IPV6_PREFIX: 
+EXTERNAL_IPV6_PREFIX: 
+g_rayford2121@cloudshell:~ (610972308695)$ gcloud compute networks subnets create secure-subnet --network=secure-isolated-vpc --region=us-central1 --range=10.5.0.0/24 --enable-private-ip-google-access
+ERROR: (gcloud.compute.networks.subnets.create) The value of ``core/project'' property is set to project number.To use this command, set ``--project'' flag to PROJECT ID or set ``core/project'' property to PROJECT ID.
+g_rayford2121@cloudshell:~ (610972308695)$ export CLOUDSDK_CORE_PROJECT="ace-practice-zone"
+g_rayford2121@cloudshell:~ (610972308695)$ gcloud compute networks create secure-isolated-vpc --subnet-mode=custom
+ERROR: (gcloud.compute.networks.create) Could not fetch resource:
+ - The resource 'projects/ace-practice-zone' was not found
+
+g_rayford2121@cloudshell:~ (610972308695)$ export MY_PROJ=$(gcloud config get-value project)
+Your active configuration is: [cloudshell-7235]
+g_rayford2121@cloudshell:~ (610972308695)$ gcloud compute networks create secure-isolated-vpc --subnet-mode=custom --project=$MY_PROJ
+ERROR: (gcloud.compute.networks.create) Could not fetch resource:
+ - The resource 'projects/ace-practice-zone' was not found
+
+g_rayford2121@cloudshell:~ (610972308695)$ export MY_PROJ=project-c1a05de0-ba4b-4764-93a
+g_rayford2121@cloudshell:~ (610972308695)$ gcloud compute networks create secure-isolated-vpc --subnet-mode=custom --project=$MY_PROJ
+ERROR: (gcloud.compute.networks.create) Could not fetch resource:
+ - The resource 'projects/project-c1a05de0-ba4b-4764-93a/global/networks/secure-isolated-vpc' already exists
+
+g_rayford2121@cloudshell:~ (610972308695)$ gcloud compute networks subnets create secure-subnet --network=secure-isolated-vpc --region=us-central1 --range=10.5.0.0/24 --enable-private-ip-google-access --project=$MY_PROJ
+ERROR: (gcloud.compute.networks.subnets.create) Could not fetch resource:
+ - The resource 'projects/project-c1a05de0-ba4b-4764-93a/regions/us-central1/subnetworks/secure-subnet' already exists
+
+g_rayford2121@cloudshell:~ (610972308695)$ gcloud iam service-accounts create deployment-executor --description="Secure deployment runner for isolated zones" --display-name="Deployment Executor" --project=$MY_PROJ
+Created service account [deployment-executor].
+Service account email: deployment-executor@project-c1a05de0-ba4b-4764-93a.iam.gserviceaccount.com
+g_rayford2121@cloudshell:~ (610972308695)$ gcloud projects add-iam-policy-binding $MY_PROJ --member="serviceAccount:deployment-executor@$MY_PROJ.iam.gserviceaccount.com" --role="roles/compute.viewer
+> ^C
+g_rayford2121@cloudshell:~ (610972308695)$ gcloud projects get-iam-policy $MY_PROJ --flatten="bindings[].members" --format='table(bindings.role, bindings.members)' | grep "deployment-executor"
